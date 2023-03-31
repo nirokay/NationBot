@@ -3,4 +3,4 @@ NationBot
 *.exe
 
 # Private Data:
-private/*
+private/

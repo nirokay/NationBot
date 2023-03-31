@@ -1,0 +1,6 @@
+# Executables:
+NationBot
+*.exe
+
+# Private Data:
+private/*

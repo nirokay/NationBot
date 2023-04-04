@@ -30,5 +30,5 @@ proc newEntry(filepath, message: string) =
 
 
 proc entry*(file: LogFile, message: string) = newEntry($file, message)
-proc entry*(e: Exception | ref Exception) = newEntry($logError, &"{e.name}: {e.msg}")
+proc entry*(e: Exception | ref Exception, additional_message: string = "no details") = newEntry($logError, &"{e.name}: {e.msg} ({additional_message})")
 

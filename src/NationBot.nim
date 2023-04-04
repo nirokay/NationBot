@@ -13,15 +13,30 @@ using
     r: Ready
 
 proc onReady(s, r) {.event(discord).} =
-    echo "reeeeeeady uwu"
-    
+    # Update Status:
+    discard s.updateStatus(
+        activities = @[ActivityStatus(
+            name: "testing, beep boop",
+            kind: atPlaying
+        )],
+        status = "online",
+        afk = false
+    )
+
+    # Load data here:
+    discard await discord.api.bulkOverwriteApplicationCommands(
+        s.user.id,
+        getApplicationCommandList()
+    )
+
+
     # Exit with confirmation:
     let starttime: string = now().format("yyyy-MM-dd HH:mm:ss (zzz)")
     echo &"Ready as {r.user} in {r.guilds.len()} guild(s)  @  {starttime}"
 
 
 proc interactionCreate(s, i) {.event(discord).} =
-    handleInteraction(s, i)
+    discard handleInteraction(s, i)
 
 
 try:

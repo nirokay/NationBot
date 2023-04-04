@@ -4,7 +4,7 @@ import ../globals, slashprocs
 
 var topic: CommandCategory
 proc add(cmd: SlashCommand) =
-    slash_commands.add(cmd)
+    slash_command_list.add(cmd)
 
 
 
@@ -23,6 +23,7 @@ add SlashCommand(
 add SlashCommand(
     name: "ping",
     desc: "Pong!",
+    call: pingCommand,
     category: topic,
     permissions: none seq[PermissionFlags]
 )

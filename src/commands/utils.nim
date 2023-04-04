@@ -61,7 +61,7 @@ proc errorMessage*(error: CommandError, msg: string = "No additional details pro
     return Response(
         embeds: @[Embed(
             title: some "Error",
-            description: some @[$error, msg].join("\n"),
+            description: some @["**" & $error & "**", msg].join("\n"),
             color: some int colError
         )]
     )

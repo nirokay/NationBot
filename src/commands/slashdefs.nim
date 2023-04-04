@@ -16,6 +16,7 @@ topic = SYSTEM
 add SlashCommand(
     name: "help",
     desc: "Provides information about the bot and commands.",
+    call: helpCommand,
     category: topic,
     permissions: none seq[PermissionFlags]
 )

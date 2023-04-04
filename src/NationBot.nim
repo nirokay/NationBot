@@ -22,14 +22,11 @@ proc onReady(s, r) {.event(discord).} =
         status = "online",
         afk = false
     )
-
     # Load data here:
     discard await discord.api.bulkOverwriteApplicationCommands(
         s.user.id,
         getApplicationCommandList()
     )
-
-
     # Exit with confirmation:
     let starttime: string = now().format("yyyy-MM-dd HH:mm:ss (zzz)")
     echo &"Ready as {r.user} in {r.guilds.len()} guild(s)  @  {starttime}"

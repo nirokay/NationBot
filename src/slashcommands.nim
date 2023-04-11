@@ -47,7 +47,7 @@ proc handleInteraction*(s, i): Future[void] {.async.} =
 
     var requested_command: SlashCommand
     for command in slash_command_list:
-        if command.name == data.name:
+        if command.name.replace(' ', '_') == data.name:
             requested_command = command
             break
     

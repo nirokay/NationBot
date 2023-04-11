@@ -38,6 +38,7 @@ topic = NATIONS
 add SlashCommand(
     name: "list nations",
     desc: "Lists all nations on this server.",
+    call: listNationsCommand,
     category: topic,
     serverOnly: true,
     permissions: none seq[PermissionFlags]
@@ -92,6 +93,7 @@ add SlashCommand(
 add SlashCommand(
     name: "set nation nickname",
     desc: "Sets the current nickname for your nation.",
+    call: setNationNicknameCommand,
     category: topic,
     serverOnly: true,
     permissions: none seq[PermissionFlags]

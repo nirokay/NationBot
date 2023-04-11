@@ -5,12 +5,14 @@ type
     # File/Dir locations:
     DirsLocation* = enum
         dirPrivate = "private/"
-        dirServers = "private/servers/"
+        dirData = "private/data/"
+        dirNations = "private/data/nation/"
         dirLogs = "private/logs/"
         dirTokens = "private/tokens/"
 
     FileLocation* = enum
         fileDiscordToken = $dirTokens & "discord.txt"
+        fileUserData = $dirData & "users.json"
         fileLogError = $dirLogs & "error.log"
         fileLogDebug = $dirLogs & "debug.log"
         fileLogUsage = $dirLogs & "usage.log"
@@ -20,7 +22,7 @@ type
         ERROR_INTERNAL = "Internal error - please report this!"
         ERROR_SERVERONLY = "The command you tried to execute can only be run on servers."
         ERROR_USAGE = "Invalid command usage, please see `help` for further information."
-    
+
     CommandCategory* = enum
         SYSTEM = "⚙️ System"
         NATIONS = "🌍 Nations"

@@ -1,6 +1,6 @@
 import options, strutils, strformat, tables
 import dimscord
-import ../globals, utils
+import ../globals, utils, ../nation/[utils]
 
 using
     s: Shard
@@ -48,5 +48,30 @@ proc pingCommand*(s, i, data): Re =
     )
 
 
+# -----------------------------------------------------------------------------
+# Nation commands:
+# -----------------------------------------------------------------------------
+
+proc listNationsCommand*(s, i, data): Re =
+    return Re(
+        embeds: @[Embed(
+            title: some "List of all nations.",
+            description: some getCurrentNationNames(i.guild_id.get()).join("\n")
+        )]
+    )
+
+
+# -----------------------------------------------------------------------------
+# Nation Management Commands:
+# -----------------------------------------------------------------------------
+
+proc setNationNicknameCommand*(s, i, data): Re =
+    let status = modifyNationField[Option[string]](i.guild_id.get(), "testing", "nickname", some "testing_new_nickname")
+    if status[0]:
+        return Re(
+            content: status[1]
+        )
+    else:
+        return errorMessage(ERROR_USAGE, status[1])
 
 

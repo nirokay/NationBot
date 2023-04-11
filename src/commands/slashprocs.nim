@@ -1,6 +1,6 @@
 import options, strutils, strformat, tables
 import dimscord
-import ../globals, utils, ../nation/[utils]
+import ../globals, utils, ../nation/[utils, typedefs]
 
 using
     s: Shard
@@ -60,18 +60,55 @@ proc listNationsCommand*(s, i, data): Re =
         )]
     )
 
+proc displayNationCommand*(s, i, data): Re =
+    let guild_id: string = i.guild_id.get()
+
+    # Very janky, but it works... 🥴
+    var nation_name: string
+    for i, value in data.options:
+        nation_name = value.str
+        break
+
+    let nation_maybe: Option[Nation] = guild_id.getGuildNationByName(nation_name)
+    if nation_maybe.isNone():
+        return ERROR_INTERNAL.errorMessage(&"No nation with the name '{nation_name}' was found...")
+    let nation: Nation = nation_maybe.get()
+
+    var emb = Embed(
+        title: some nation.name,
+        description: nation.desc,
+        url: nation.wiki_link
+    )
+    # Title (Name + Nickname):
+    if nation.nickname.isSome():
+        emb.title = some emb.title.get() & &" ({nation.nickname.get()})"
+
+    # Images:
+    if nation.flag_link.isSome():
+        emb.thumbnail = some EmbedThumbnail(url: nation.flag_link.get())
+    if nation.map_link.isSome():
+        emb.image = some EmbedImage(url: nation.map_link.get())
+
+    return Re(
+        embeds: @[emb]
+    )
 
 # -----------------------------------------------------------------------------
 # Nation Management Commands:
 # -----------------------------------------------------------------------------
 
 proc setNationNicknameCommand*(s, i, data): Re =
-    let status = modifyNationField[Option[string]](i.guild_id.get(), "testing", "nickname", some "testing_new_nickname")
-    if status[0]:
-        return Re(
-            content: status[1]
-        )
-    else:
-        return errorMessage(ERROR_USAGE, status[1])
+    return getResponse modifyNation(i, "nickname")
 
+proc setNationDescriptionCommand*(s, i, data): Re =
+    return getResponse modifyNation(i, "desc")
+
+proc setNationWikiLinkCommand*(s, i, data): Re =
+    return getresponse modifyNation(i, "wiki_link")
+
+proc setNationFlagLinkCommand*(s, i, data): Re =
+    return getResponse modifyNation(i, "flag_link")
+
+proc setNationMapLinkCommand*(s, i, data): Re =
+    return getResponse modifyNation(i, "map_link")
 

@@ -8,6 +8,17 @@ using
     m: Message
     r: Response
 
+# Error message stuff:
+proc errorMessage*(error: CommandError, msg: string = "No additional details provided."): Response =
+    return Response(
+        embeds: @[Embed(
+            title: some "Error",
+            description: some @["**" & $error & "**", msg].join("\n"),
+            color: some int colError
+        )]
+    )
+
+# Shenanigans:
 proc modifyEmbedsIfNecessary(embeds: seq[Embed]): seq[Embed] =
     for e in embeds:
         var emb: Embed = e
@@ -15,6 +26,7 @@ proc modifyEmbedsIfNecessary(embeds: seq[Embed]): seq[Embed] =
             emb.color = some int colDefault
         result.add(emb)
     return result
+
 
 # Slash Command Response:
 proc convertSlashResponse(r): InteractionCallbackDataMessage =
@@ -36,6 +48,14 @@ proc sendResponse*(s, i, r) =
     except Exception as e:
         e.entry(&"Failed to send slash response for command '{i.data.get().name}'.")
 
+proc getResponse*(status: (bool, string)): Response =
+    if status[0]: result = Response(content: status[1])
+    else: result = ERROR_INTERNAL.errorMessage(status[1])
+    return result
+
+proc sendResponse*(s, i; status: (bool, string)) =
+    sendResponse(s, i, status.getResponse())
+
 
 # Message response:
 proc sendResponse*(s, m, r): Future[Message] {.async.} =
@@ -56,13 +76,12 @@ proc sendResponse*(s, m, r): Future[Message] {.async.} =
 proc sendMessage*(s, m, r): Future[Message] {.async.} = return await sendResponse(s, m, r)
 
 
-# Error message stuff:
-proc errorMessage*(error: CommandError, msg: string = "No additional details provided."): Response =
-    return Response(
-        embeds: @[Embed(
-            title: some "Error",
-            description: some @["**" & $error & "**", msg].join("\n"),
-            color: some int colError
-        )]
-    )
+# Misc.:
+proc mentionUser*(user_id: string): string =
+    return &"<@{user_id}>"
+proc mentionUser*(user: User): string =
+    return mentionUser(user.id)
+proc mentionUser*(member: Member): string =
+    return mentionUser(member.user.id)
+
 

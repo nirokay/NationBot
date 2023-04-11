@@ -60,6 +60,7 @@ proc writeGuildNations*(guild_id: string, nations: Table[string, Nation]): (bool
         return (false, "Unable to write to disk, changes will not be saved.")
     finally:
         guild_id.cacheGuildNationsData()
+        echo "loading new cache"
 
 
 proc writeGuildNation*(guild_id: string, nation: Nation): (bool, string) =

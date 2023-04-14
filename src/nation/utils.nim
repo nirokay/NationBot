@@ -2,7 +2,9 @@ import os, sets, strutils, strformat, tables, json, options
 import dimscord
 import ../globals, ../fileio/logger, typedefs, filehandler
 
-const invalid_nation_characters: HashSet[char] = toHashSet ['"', '\\', '/']
+const
+    invalid_nation_characters: HashSet[char] = toHashSet ['"', '\\', '/', '`', '*']
+    max_nation_character_length: int = 32
 
 proc getGuildNations(guild_id: string): seq[Nation] =
     if not nation_cache.hasKey(guild_id): return
@@ -22,6 +24,8 @@ proc getCurrentNationNames*(guild_id: string): seq[string] =
         result.add(nation.name)
         if nation.nickname.isSome():
             result[^1].add(&" ({nation.nickname.get()})")
+    if result.len() == 0:
+        result.add("`no nations were created yet...`")
     return result
 
 
@@ -35,13 +39,21 @@ proc getUserNationName*(guild_id, user_id: string): Option[string] =
 
 
 proc nationNameIsValid(name: string): bool =
-    let name_set: HashSet[char] = toHashSet(name)
-    return invalid_nation_characters.intersection(name_set).len() == 0
+    let
+        name_set: HashSet[char] = toHashSet(name)
+        charsCheck: bool = invalid_nation_characters.intersection(name_set).len() == 0
+        lengthCheck: bool = name.len() <= max_nation_character_length
+    return charsCheck and lengthCheck
 
+
+proc getInvalidNationChars(): seq[char] =
+    for i in invalid_nation_characters.items:
+        result.add(i)
+    return result
 
 proc createNation*(guild_id, nation_name, owner_id: string): (bool, string) =
     # Validity checks:
-    if not nation_name.strip().nationNameIsValid(): return (false, &"Name contains invalid characters: ({$invalid_nation_characters})")
+    if not nation_name.strip().nationNameIsValid(): return (false, &"""Name is too long (max length: {max_nation_character_length}) or contains invalid characters: {getInvalidNationChars().join(" ")}""")
     for existing_nation in guild_id.getGuildNations():
         # Assigned owner check:
         if owner_id == existing_nation.owner_id:

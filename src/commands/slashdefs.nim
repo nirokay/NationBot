@@ -69,6 +69,7 @@ topic = NATION_MANAGEMENT
 add SlashCommand(
     name: "create nation",
     desc: "Creates a nation. (only one nation can be ruled at once, name cannot be changed)",
+    call: createNationCommand,
     category: topic,
     serverOnly: true,
     permissions: none seq[PermissionFlags],

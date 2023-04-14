@@ -71,7 +71,7 @@ proc displayNationCommand*(s, i, data): Re =
 
     let nation_maybe: Option[Nation] = guild_id.getGuildNationByName(nation_name)
     if nation_maybe.isNone():
-        return ERROR_INTERNAL.errorMessage(&"No nation with the name '{nation_name}' was found...")
+        return ERROR_GENERIC.errorMessage(&"No nation with the name '{nation_name}' was found...")
     let nation: Nation = nation_maybe.get()
 
     var emb = Embed(
@@ -93,9 +93,17 @@ proc displayNationCommand*(s, i, data): Re =
         embeds: @[emb]
     )
 
+
 # -----------------------------------------------------------------------------
 # Nation Management Commands:
 # -----------------------------------------------------------------------------
+
+proc createNationCommand*(s, i, data): Re =
+    let
+        nation_name: string = data.options["nation"].str
+        owner_id: string = i.member.get().user.id
+        status: (bool, string) = i.guild_id.get().createNation(nation_name, owner_id)
+    return getResponse status
 
 proc setNationNicknameCommand*(s, i, data): Re =
     return getResponse modifyNation(i, "nickname")

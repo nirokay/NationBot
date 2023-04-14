@@ -20,6 +20,7 @@ type
     # Message stuff:
     CommandError* = enum
         ERROR_INTERNAL = "Internal error - please report this!"
+        ERROR_GENERIC = "Generic error"
         ERROR_SERVERONLY = "The command you tried to execute can only be run on servers."
         ERROR_USAGE = "Invalid command usage, please see `help` for further information."
 

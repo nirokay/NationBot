@@ -50,7 +50,7 @@ proc sendResponse*(s, i, r) =
 
 proc getResponse*(status: (bool, string)): Response =
     if status[0]: result = Response(content: status[1])
-    else: result = ERROR_INTERNAL.errorMessage(status[1])
+    else: result = ERROR_GENERIC.errorMessage(status[1])
     return result
 
 proc sendResponse*(s, i; status: (bool, string)) =

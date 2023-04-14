@@ -30,6 +30,28 @@ add SlashCommand(
 )
 
 
+
+# -----------------------------------------------------------------------------
+# System Commands:
+# -----------------------------------------------------------------------------
+topic = PROFILE
+
+add SlashCommand(
+    name: "link minecraft",
+    desc: "Links your account to your minecraft account for display.",
+    call: linkMinecraftUsernameCommand,
+    category: topic,
+    permissions: none seq[PermissionFlags],
+    options: @[SlashOption(
+        kind: acotStr,
+        name: "username",
+        description: "Will be displayed when relevant.",
+        required: some true
+    )]
+)
+
+
+
 # -----------------------------------------------------------------------------
 # Nation Commands:
 # -----------------------------------------------------------------------------
@@ -82,15 +104,31 @@ add SlashCommand(
 )
 
 add SlashCommand(
-    name: "abandon nation",
-    desc: "Makes you leave a nation. (cannot be undone)",
+    name: "leave nation",
+    desc: "Makes you leave a nation. (cannot be undone!)",
+    #call: abandonNationCommand,
     category: topic,
     serverOnly: true,
     permissions: none seq[PermissionFlags],
     options: @[SlashOption(
         kind: acotStr,
         name: "nation",
-        description: "Leaves the specified nation. You have to type out its full name!",
+        description: "Leaves the specified nation.",
+        required: some true
+    )]
+)
+
+add SlashCommand(
+    name: "delete nation",
+    desc: "Deletes your nation: (CANNOT BE UNDONE!)",
+    #call:
+    category: topic,
+    serverOnly: true,
+    permissions: none seq[PermissionFlags],
+    options: @[SlashOption(
+        kind: acotStr,
+        name: "delete_nation",
+        description: "Irreversibly deletes your nation",
         required: some true
     )]
 )
@@ -98,6 +136,7 @@ add SlashCommand(
 add SlashCommand(
     name: "invite member",
     desc: "Invites a member to your currently ruled nation.",
+    call: sendInviteCommand,
     category: topic,
     serverOnly: true,
     permissions: none seq[PermissionFlags],
@@ -105,6 +144,45 @@ add SlashCommand(
         kind: acotUser,
         name: "user",
         description: "Invite this member.",
+        required: some true
+    )]
+)
+
+add SlashCommand(
+    name: "invites",
+    desc: "Displays pending invites.",
+    call: displayPendingInvitesCommand,
+    category: topic,
+    serverOnly: true,
+    permissions: none seq[PermissionFlags],
+)
+
+add SlashCommand(
+    name: "invite accept",
+    desc: "Accepts an invite.",
+    call: acceptInviteCommand,
+    category: topic,
+    serverOnly: true,
+    permissions: none seq[PermissionFlags],
+    options: @[SlashOption(
+        kind: acotStr,
+        name: "nation",
+        description: "Accept invite to this nation.",
+        required: some true
+    )]
+)
+
+add SlashCommand(
+    name: "invite decline",
+    desc: "Declines an invite.",
+    call: declineInviteCommand,
+    category: topic,
+    serverOnly: true,
+    permissions: none seq[PermissionFlags],
+    options: @[SlashOption(
+        kind: acotStr,
+        name: "nation",
+        description: "Declines invite to this nation.",
         required: some true
     )]
 )

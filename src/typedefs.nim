@@ -7,12 +7,12 @@ type
         dirPrivate = "private/"
         dirData = "private/data/"
         dirNations = "private/data/nation/"
+        dirUsers = "private/data/users/"
         dirLogs = "private/logs/"
         dirTokens = "private/tokens/"
 
     FileLocation* = enum
         fileDiscordToken = $dirTokens & "discord.txt"
-        fileUserData = $dirData & "users.json"
         fileLogError = $dirLogs & "error.log"
         fileLogDebug = $dirLogs & "debug.log"
         fileLogUsage = $dirLogs & "usage.log"
@@ -22,18 +22,20 @@ type
         ERROR_INTERNAL = "Internal error - please report this!"
         ERROR_GENERIC = "Generic error"
         ERROR_SERVERONLY = "The command you tried to execute can only be run on servers."
-        ERROR_USAGE = "Invalid command usage, please see `help` for further information."
+        ERROR_USAGE = "Invalid command usage."
 
-    CommandCategory* = enum
-        SYSTEM = "⚙️ System"
-        NATIONS = "🌍 Nations"
-        NATION_MANAGEMENT = "🛠️ Nation Management"
-        UNDEFINED = "❓ Misc"
-    
     EmbedColour* = enum
         colError = 0xB32050
         colDefault = 0xBD93F9
         colWarning = 0xE6B800
+
+    # Command Stuff:
+    CommandCategory* = enum
+        SYSTEM = "⚙️ System"
+        PROFILE = "🛠️ Profile Setup"
+        NATIONS = "🌍 Nations"
+        NATION_MANAGEMENT = "🛠️ Nation Management"
+        UNDEFINED = "❓ Misc"
 
     Response* = object
         channel_id*, content*: string

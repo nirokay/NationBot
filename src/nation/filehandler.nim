@@ -12,7 +12,7 @@ proc createGuildFile(guild_id: string): bool =
             serverFile.writeFile("{}")
         return true
     except Exception as e:
-        e.entry("Could not cwrite new guild nation file.")
+        e.entry("Could not write new guild nation file.")
         return false
 
 
@@ -60,8 +60,6 @@ proc writeGuildNations*(guild_id: string, nations: Table[string, Nation]): (bool
         return (false, "Unable to write to disk, changes will not be saved.")
     finally:
         guild_id.cacheGuildNationsData()
-        echo "loading new cache"
-
 
 proc writeGuildNation*(guild_id: string, nation: Nation): (bool, string) =
     var nationTable: Table[string, Nation] = loadGuildNations(guild_id)

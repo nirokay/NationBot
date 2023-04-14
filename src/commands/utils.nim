@@ -1,6 +1,6 @@
-import asyncdispatch, options, strutils, strformat
+import asyncdispatch, options, strutils, strformat, tables
 import dimscord
-import ../globals, ../typedefs, ../fileio/logger
+import ../globals, ../typedefs, ../fileio/logger, ../nation/[typedefs, utils, users]
 
 using
     s: Shard
@@ -84,4 +84,13 @@ proc mentionUser*(user: User): string =
 proc mentionUser*(member: Member): string =
     return mentionUser(member.user.id)
 
-
+proc fullName*(user_id, guild_id: string): string =
+    result = user_id.mentionUser()
+    let player: Player = guild_id.getGuildUser(user_id)
+    if player.player_name.isSome():
+        result.add(&" ({player.player_name.get()})")
+    return result
+proc fullName*(user_ids: seq[string], guild_id: string): seq[string] =
+    for i in user_ids:
+        result.add(fullName(i, guild_id))
+    return result

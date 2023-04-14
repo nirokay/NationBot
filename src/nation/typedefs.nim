@@ -8,6 +8,11 @@ type
 
         owner_id*: string
         member_ids*: Option[seq[string]]
+    
+    Player* = object
+        id*: string
+        player_name*: Option[string]
+        invite_list*: Option[seq[string]]
 
 
 var nation_cache* {.global.}: Table[string, seq[Nation]] # only used for reading, not writing!

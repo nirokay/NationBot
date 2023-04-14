@@ -1,6 +1,6 @@
-import options, strutils, strformat, tables
+import options, strutils, strformat, tables, sequtils
 import dimscord
-import ../globals, utils, ../nation/[utils, typedefs]
+import ../globals, utils, ../nation/[utils, typedefs, users]
 
 using
     s: Shard
@@ -49,6 +49,14 @@ proc pingCommand*(s, i, data): Re =
 
 
 # -----------------------------------------------------------------------------
+# Profile commands:
+# -----------------------------------------------------------------------------
+
+proc linkMinecraftUsernameCommand*(s, i, data): Re =
+    return getResponse linkMinecraftUsername(i.guild_id.get(), i.member.get().user.id, data.options["username"].str)
+
+
+# -----------------------------------------------------------------------------
 # Nation commands:
 # -----------------------------------------------------------------------------
 
@@ -83,6 +91,19 @@ proc displayNationCommand*(s, i, data): Re =
     if nation.nickname.isSome():
         emb.title = some emb.title.get() & &" ({nation.nickname.get()})"
 
+    # Fields:
+    var member_list: seq[string]
+    if nation.member_ids.isSome(): member_list = nation.member_ids.get()
+    member_list.add(nation.owner_id)
+
+
+    emb.fields = some @[
+        EmbedField(
+            name: "Members",
+            value: member_list.fullName(guild_id).join("\n")
+        )
+    ]
+
     # Images:
     if nation.flag_link.isSome():
         emb.thumbnail = some EmbedThumbnail(url: nation.flag_link.get())
@@ -105,11 +126,16 @@ proc createNationCommand*(s, i, data): Re =
         status: (bool, string) = i.guild_id.get().createNation(nation_name, owner_id)
     return getResponse status
 
+# proc abandonNationCommand*(s, i, data): Re = return
+
+
+# Customization:
+
 proc setNationNicknameCommand*(s, i, data): Re =
-    return getResponse modifyNation(i, "nickname")
+    return getResponse modifyNation(i, "nickname", max_nation_character_length)
 
 proc setNationDescriptionCommand*(s, i, data): Re =
-    return getResponse modifyNation(i, "desc")
+    return getResponse modifyNation(i, "desc", 2048)  # 2048 is the limit discord sets for embed descriptions
 
 proc setNationWikiLinkCommand*(s, i, data): Re =
     return getresponse modifyNation(i, "wiki_link")
@@ -120,3 +146,22 @@ proc setNationFlagLinkCommand*(s, i, data): Re =
 proc setNationMapLinkCommand*(s, i, data): Re =
     return getResponse modifyNation(i, "map_link")
 
+
+# Invites:
+
+proc sendInviteCommand*(s, i, data): Re =
+    return getResponse sendPlayerInvite(i, data.options["user"].user_id)
+
+proc displayPendingInvitesCommand*(s, i, data): Re =
+    return Re(
+        embeds: @[Embed(
+            title: some "Pending invites",
+            description: some getPendingInvites(i.guild_id.get(), i.member.get().user.id)
+        )]
+    )
+
+proc acceptInviteCommand*(s, i, data): Re =
+    return getResponse nationInviteAct(i.guild_id.get(), i.member.get().user.id, data.options["nation"].str, true)
+
+proc declineInviteCommand*(s, i, data): Re =
+    return getResponse nationInviteAct(i.guild_id.get(), i.member.get().user.id, data.options["nation"].str, false)

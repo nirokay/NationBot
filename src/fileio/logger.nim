@@ -4,7 +4,7 @@ import ../typedefs
 type LogFile* = enum
     logError = $fileLogError
     logDebug = $fileLogDebug
-    logUSage = $fileLogUsage
+    logUsage = $fileLogUsage
 
 proc newEntry(filepath, message: string) =
     if not filepath.fileExists():

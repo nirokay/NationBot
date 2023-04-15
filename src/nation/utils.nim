@@ -1,4 +1,4 @@
-import os, sets, strutils, strformat, tables, json, options, sequtils
+import os, sets, strutils, strformat, tables, json, options, sequtils, times
 import dimscord
 import ../globals, ../fileio/logger, typedefs, filehandler, users
 
@@ -10,6 +10,7 @@ import ../globals, ../fileio/logger, typedefs, filehandler, users
 const
     invalid_nation_characters: HashSet[char] = toHashSet ['"', '\\', '/', '`', '*']
     max_nation_character_length*: int = 32
+    time_format_creation_date*: string = "yyyy-MM-dd HH:mm"
 
 proc getGuildNations(guild_id: string): seq[Nation] =
     if not nation_cache.hasKey(guild_id): return
@@ -78,7 +79,8 @@ proc createNation*(guild_id, nation_name, owner_id: string): (bool, string) =
     # Create Nation:
     return guild_id.writeGuildNation(Nation(
         name: nation_name.strip(),
-        owner_id: owner_id
+        owner_id: owner_id,
+        creation_date: some now().utc().format(time_format_creation_date)
     ))
 
 
@@ -137,6 +139,48 @@ proc addUserToNation*(guild_id, user_id, nation_name: string): (bool, string) =
     members.add(user_id)
     nation.member_ids = some members
     return guild_id.writeGuildNation(nation)
+
+
+proc removeUserFromNation*(guild_id, user_id, nation_name: string): (bool, string) =
+    var nation_maybe: Option[Nation] = guild_id.getGuildNationByName(nation_name)
+
+    if nation_maybe.isNone(): return (false, "Requested nation does not exist.")
+    var nation: Nation = nation_maybe.get()
+
+    let owner_text: string = " If you are the owner, you need to delete the nation instead."
+    if nation.member_ids.isNone(): return (false, "The nation does not have any members." & owner_text)
+    let member_list: seq[string] = nation.member_ids.get()
+
+    if user_id notin member_list: return (false, "You are not in this nation." & owner_text)
+
+    var members: seq[string]
+    for i in members:
+        if i == user_id: continue
+        members.add(i)
+    
+    nation.member_ids = some members
+    return guild_id.writeGuildNation(nation)
+
+
+proc deleteNation*(i: Interaction, nation_name: string): (bool, string) =
+    let
+        guild_id: string = i.guild_id.get()
+        user_id: string = i.member.get().user.id
+        nation_maybe: Option[Nation] = guild_id.getGuildNationByName(nation_name)
+
+    if nation_maybe.isNone():
+        return (false, "You do not rule this nation, you cannot delete it. Did you make a typo in the name?")
+    let nation_to_del: Nation = nation_maybe.get()
+    if nation_to_del.owner_id != user_id:
+        return (false, "You cannot delete this nation. You are not the owner.")
+
+    var nations: Table[string, Nation]
+    for name, nation in guild_id.loadGuildNations():
+        if name == nation_to_del.name: continue
+        nations[name] = nation
+
+    return guild_id.writeGuildNations(nations)
+
 
 
 # -----------------------------------------------------------------------------

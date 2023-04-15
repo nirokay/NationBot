@@ -79,7 +79,7 @@ proc displayNationCommand*(s, i, data): Re =
 
     let nation_maybe: Option[Nation] = guild_id.getGuildNationByName(nation_name)
     if nation_maybe.isNone():
-        return ERROR_GENERIC.errorMessage(&"No nation with the name '{nation_name}' was found...")
+        return ERROR_USAGE.errorMessage(&"No nation with the name '{nation_name}' was found...")
     let nation: Nation = nation_maybe.get()
 
     var emb = Embed(
@@ -97,12 +97,18 @@ proc displayNationCommand*(s, i, data): Re =
     member_list.add(nation.owner_id)
 
 
-    emb.fields = some @[
+    var fields: seq[EmbedField] = @[
         EmbedField(
             name: "Members",
             value: member_list.fullName(guild_id).join("\n")
         )
     ]
+    if nation.creation_date.isSome():
+        fields.add EmbedField(
+            name: "Creation Time",
+            value: nation.creation_date.get()
+        )
+    emb.fields = some fields
 
     # Images:
     if nation.flag_link.isSome():
@@ -126,7 +132,11 @@ proc createNationCommand*(s, i, data): Re =
         status: (bool, string) = i.guild_id.get().createNation(nation_name, owner_id)
     return getResponse status
 
-# proc abandonNationCommand*(s, i, data): Re = return
+proc deleteNationCommand*(s, i, data): Re =
+    return getResponse deleteNation(i, data.options["delete_nation_confirmation"].str)
+
+proc leaveNationCommand*(s, i, data): Re =
+    return getResponse removeUserFromNation(i.guild_id.get(), i.member.get().user.id, data.options["nation"].str)
 
 
 # Customization:

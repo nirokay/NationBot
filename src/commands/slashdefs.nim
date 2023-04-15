@@ -32,7 +32,7 @@ add SlashCommand(
 
 
 # -----------------------------------------------------------------------------
-# System Commands:
+# Profile Commands:
 # -----------------------------------------------------------------------------
 topic = PROFILE
 
@@ -106,7 +106,7 @@ add SlashCommand(
 add SlashCommand(
     name: "leave nation",
     desc: "Makes you leave a nation. (cannot be undone!)",
-    #call: abandonNationCommand,
+    call: leaveNationCommand,
     category: topic,
     serverOnly: true,
     permissions: none seq[PermissionFlags],
@@ -121,13 +121,13 @@ add SlashCommand(
 add SlashCommand(
     name: "delete nation",
     desc: "Deletes your nation: (CANNOT BE UNDONE!)",
-    #call:
+    call: deleteNationCommand,
     category: topic,
     serverOnly: true,
     permissions: none seq[PermissionFlags],
     options: @[SlashOption(
         kind: acotStr,
-        name: "delete_nation",
+        name: "delete_nation_confirmation",
         description: "Irreversibly deletes your nation",
         required: some true
     )]

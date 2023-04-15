@@ -138,11 +138,25 @@ proc deleteNationCommand*(s, i, data): Re =
 proc leaveNationCommand*(s, i, data): Re =
     return getResponse removeUserFromNation(i.guild_id.get(), i.member.get().user.id, data.options["nation"].str)
 
+proc removeUserFromNationCommand*(s, i, data): Re =
+    let
+        guild_id: string = i.guild_id.get()
+        owner_id: string = i.member.get().user.id
+        user_id: string = data.options["user"].user_id
+        nation_maybe: Option[Nation] = guild_id.getGuildNationByOwner(owner_id)
+    
+    if nation_maybe.isNone():
+        return getResponse (false, "You do not rule a nation. You cannot remove this member from it.")
+    return getResponse removeUserFromNation(guild_id, user_id, nation_maybe.get().name)
+
 
 # Customization:
 
 proc setNationNicknameCommand*(s, i, data): Re =
     return getResponse modifyNation(i, "nickname", max_nation_character_length)
+
+proc resetNationNicknameCommand*(s, i, data): Re =
+    return getResponse resetNationField[string](i, "nickname")
 
 proc setNationDescriptionCommand*(s, i, data): Re =
     return getResponse modifyNation(i, "desc", 2048)  # 2048 is the limit discord sets for embed descriptions

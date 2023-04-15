@@ -18,7 +18,7 @@ proc getGuildNations(guild_id: string): seq[Nation] =
         result.add(nation)
     return result
 
-proc getGuildNationByOwner(guild_id, owner_id: string): Option[Nation] =
+proc getGuildNationByOwner*(guild_id, owner_id: string): Option[Nation] =
     let nations: seq[Nation] = guild_id.getGuildNations()
     for nation in nations:
         if nation.owner_id == owner_id:
@@ -126,6 +126,24 @@ proc modifyNation*(i: Interaction, field_name: string, max_length: int = 9999): 
     return modifyNationField[string](guild_id, user_nation.get(), field_name, new_value.get())
 
 
+proc resetNationField*[T](i: Interaction, field: string): (bool, string) =
+    let
+        guild_id: string = i.guild_id.get()
+        owner_id: string = i.member.get().user.id
+        nation_maybe: Option[Nation] = guild_id.getGuildNationByOwner(owner_id)
+
+    if nation_maybe.isNone():
+        return (false, &"You are not an owner of any nation. You cannot reset its '{field}' field!")
+
+    var
+        nation: Nation = nation_maybe.get()
+        nationJson: JsonNode = %nation
+    nationJson[field] = %none T
+    nation = nationJson.to(Nation)
+
+    return guild_id.writeGuildNation(nation)
+
+
 proc addUserToNation*(guild_id, user_id, nation_name: string): (bool, string) =
     var
         nation_maybe: Option[Nation] = guild_id.getGuildNationByName(nation_name)
@@ -147,11 +165,11 @@ proc removeUserFromNation*(guild_id, user_id, nation_name: string): (bool, strin
     if nation_maybe.isNone(): return (false, "Requested nation does not exist.")
     var nation: Nation = nation_maybe.get()
 
-    let owner_text: string = " If you are the owner, you need to delete the nation instead."
+    let owner_text: string = " Owners cannot leave a nation, they have to permanently delete them!"
     if nation.member_ids.isNone(): return (false, "The nation does not have any members." & owner_text)
     let member_list: seq[string] = nation.member_ids.get()
 
-    if user_id notin member_list: return (false, "You are not in this nation." & owner_text)
+    if user_id notin member_list: return (false, "Member not in this nation..." & owner_text)
 
     var members: seq[string]
     for i in members:

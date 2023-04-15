@@ -19,6 +19,7 @@ function loadConfig() {
 function main() {
     # Load up config from file (or use defaults):
     loadConfig
+    compile
 
     # Killing process, if started already:
     if [ $PID -gt 0 ]

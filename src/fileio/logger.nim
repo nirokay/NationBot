@@ -31,6 +31,7 @@ proc newEntry(filepath, message: string) =
 
 proc entry*(file: LogFile, message: string) = newEntry($file, message)
 proc entry*(e: Exception | ref Exception, additional_message: string = "no details") =
-    echo &"{e.name}\n\t{e.msg}\n\t{additional_message}"
+    echo &"{e.name}\n\t{e.msg}\n\t{additional_message}" &
+        &"\nTraceback:\n{e.getStackTrace()}"
     newEntry($logError, &"{e.name}: {e.msg} ({additional_message})")
 

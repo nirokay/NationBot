@@ -190,6 +190,7 @@ add SlashCommand(
 add SlashCommand(
     name: "remove member",
     desc: "Removes a member from your currently ruled nation.",
+    call: removeUserFromNationCommand,
     category: topic,
     serverOnly: true,
     permissions: none seq[PermissionFlags],
@@ -216,6 +217,7 @@ add SlashCommand(
     )]
 )
 
+#[ #! Does not work, issues with json (NilAccessDefect):
 add SlashCommand(
     name: "reset nation nickname",
     desc: "Removes the current nickname of your nation.",
@@ -223,6 +225,7 @@ add SlashCommand(
     serverOnly: true,
     permissions: none seq[PermissionFlags]
 )
+]#
 
 add SlashCommand(
     name: "set nation description",

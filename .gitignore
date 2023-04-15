@@ -5,5 +5,7 @@ NationBot
 # Private Data:
 private/
 
-# Testing:
+# Testing/Project Management:
 *test*
+*todo*
+*TODO*

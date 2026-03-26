@@ -74,7 +74,7 @@ proc createNation*(guild_id, nation_name, owner_id: string): (bool, string) =
             return (false, &"You already rule a nation. To form another you have to abandon your current one.")
         # Existing names check:
         if nation_name.toLower().strip() == existing_nation.name.toLower().strip():
-            return (false, &"The nation name '{nation_name}' already exists. Please try another name!")        
+            return (false, &"The nation name '{nation_name}' already exists. Please try another name!")
 
     # Create Nation:
     return guild_id.writeGuildNation(Nation(
@@ -108,16 +108,16 @@ proc modifyNation*(i: Interaction, field_name: string, max_length: int = 9999): 
         user: User = i.member.get().user
     var
         new_value: Option[string]
-    
+
     # Users nation check and assignment:
     let user_nation: Option[string] = getUserNationName(guild_id, user.id)
     if user_nation.isNone():
         return (false, "You are not an owner of any nation.")
-    
+
     # This will probably need to be changed in future:
     for i, value in data.options:
         new_value = some value.str
-    
+
     if new_value.isNone():
         return (false, "Received empty data.")
     elif new_value.get().len() > max_length:
@@ -148,7 +148,7 @@ proc addUserToNation*(guild_id, user_id, nation_name: string): (bool, string) =
     var
         nation_maybe: Option[Nation] = guild_id.getGuildNationByName(nation_name)
         members: seq[string]
-    
+
     if nation_maybe.isNone(): return (false, "The requested nation does not exist.")
     var nation: Nation = nation_maybe.get()
 
@@ -175,7 +175,7 @@ proc removeUserFromNation*(guild_id, user_id, nation_name: string): (bool, strin
     for i in members:
         if i == user_id: continue
         members.add(i)
-    
+
     nation.member_ids = some members
     return guild_id.writeGuildNation(nation)
 
@@ -205,8 +205,11 @@ proc deleteNation*(i: Interaction, nation_name: string): (bool, string) =
 # User Procs:
 # -----------------------------------------------------------------------------
 
+proc stringToCharSeq(text: string): seq[char] =
+    for c in text: result.add c
+
 proc linkMinecraftUsername*(guild_id, user_id, minecraft_username: string): (bool, string) =
-    let valid_chars: HashSet[char] = toHashSet toSeq[char]("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")
+    let valid_chars: HashSet[char] = toHashSet stringToCharSeq("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")
 
     # Name length check:
     if minecraft_username.len() < 3 or minecraft_username.len() > 16:
@@ -214,7 +217,7 @@ proc linkMinecraftUsername*(guild_id, user_id, minecraft_username: string): (boo
 
     # Valid chars check:
     let
-        name_chars: HashSet[char] = toHashSet toSeq[char](minecraft_username)
+        name_chars: HashSet[char] = toHashSet stringToCharSeq(minecraft_username)
         diff: HashSet[char] = name_chars.difference(valid_chars)
     if diff.len() != 0:
         return (false, &"""Invalid minecraft username. Invalid characters included: ```{$diff}```""")
@@ -245,7 +248,7 @@ proc sendPlayerInvite*(guild_id, user_id, nation_name: string): (bool, string) =
     var invites: seq[string] = player.invite_list.get()
     if nation_name in invites:
         return (false, "Invite already pending...")
-    
+
     # Add invite and write to disk:
     invites.add(nation_name)
     player.invite_list = some invites
@@ -269,7 +272,7 @@ proc getPendingInvites*(guild_id, user_id: string): string =
         player: Player = guild_id.getGuildUser(user_id)
         no_invites_text: string = "You do not have any pending invites."
         bullet_point: string = "⤷"
-    
+
     if player.invite_list.isNone():
         return no_invites_text
 
@@ -304,4 +307,3 @@ proc nationInviteAct*(guild_id, user_id, nation_name: string, accept: bool): (bo
         return (true, &"Invite to `{nation_name}` was accepted.")
     else:
         return (true, &"Invite to `{nation_name}` was declined.")
-

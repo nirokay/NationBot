@@ -13,7 +13,7 @@ proc convertSlashToAppCommand(cmd: SlashCommand): ApplicationCommand =
         permissions: set[PermissionFlags]
         commandKind: ApplicationCommandType = atSlash
         commandName: string = cmd.name.replace(' ', '_')
-    
+
     # Handle application type:
     if cmd.kind.isSome():
         commandKind = cmd.kind.get()
@@ -23,14 +23,14 @@ proc convertSlashToAppCommand(cmd: SlashCommand): ApplicationCommand =
         for perm in cmd.permissions.get():
             let setPerm: set[PermissionFlags] = {perm}
             permissions = permissions + setPerm
-    
+
     # Convert to ApplicationCommand:
     return ApplicationCommand(
         name: commandName,
         description: cmd.desc,
         kind: commandKind,
         options: cmd.options,
-        default_permission: defaultPermissions,
+        default_permission: some defaultPermissions,
         default_member_permissions: some permissions
     )
 
@@ -50,22 +50,19 @@ proc handleInteraction*(s, i): Future[void] {.async.} =
         if command.name.replace(' ', '_') == data.name:
             requested_command = command
             break
-    
+
     # Again, should not happen... BUT:
     if requested_command.name == "":
         sendResponse(s, i, errorMessage(ERROR_INTERNAL, "Command name not found."))
         return
-    
+
     # Handle server-only command:
     if requested_command.serverOnly and i.guild_id.isNone():
         sendResponse(s, i, errorMessage(ERROR_SERVERONLY))
         return
-    
+
     # Attempt calling command:
     try:
         sendResponse(s, i, requested_command.call(s, i, data))
     except Exception as e:
         e.entry(&"Failed to execute command '{data.name}'")
-
-
-

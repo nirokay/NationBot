@@ -8,6 +8,10 @@ NationBot is a discord bot for nation roleplay. With this bot you can manage you
 
 You can invite it [here](https://discord.com/api/oauth2/authorize?client_id=1091415998982275092&permissions=414531832896&scope=bot%20applications.commands).
 
+## Guides
+
+You can [learn nation management](./docs/creating_nation.md) and [learn general commands](./docs/being_a_member.md) in the respecting documents.
+
 ## Nation wiki pages
 
 These are elements you can set to be displayed:

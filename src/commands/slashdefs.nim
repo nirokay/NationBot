@@ -104,21 +104,6 @@ add SlashCommand(
 )
 
 add SlashCommand(
-    name: "leave nation",
-    desc: "Makes you leave a nation. (cannot be undone!)",
-    call: leaveNationCommand,
-    category: topic,
-    serverOnly: true,
-    permissions: none seq[PermissionFlags],
-    options: @[SlashOption(
-        kind: acotStr,
-        name: "nation",
-        description: "Leaves the specified nation.",
-        required: some true
-    )]
-)
-
-add SlashCommand(
     name: "delete nation",
     desc: "Deletes your nation: (CANNOT BE UNDONE!)",
     call: deleteNationCommand,
@@ -134,6 +119,21 @@ add SlashCommand(
 )
 
 add SlashCommand(
+    name: "leave nation",
+    desc: "Makes you leave a nation. (cannot be undone!)",
+    call: leaveNationCommand,
+    category: topic,
+    serverOnly: true,
+    permissions: none seq[PermissionFlags],
+    options: @[SlashOption(
+        kind: acotStr,
+        name: "nation",
+        description: "Leaves the specified nation.",
+        required: some true
+    )]
+)
+
+add SlashCommand(
     name: "invite member",
     desc: "Invites a member to your currently ruled nation.",
     call: sendInviteCommand,
@@ -144,6 +144,21 @@ add SlashCommand(
         kind: acotUser,
         name: "user",
         description: "Invite this member.",
+        required: some true
+    )]
+)
+
+add SlashCommand(
+    name: "remove member",
+    desc: "Removes a member from your currently ruled nation.",
+    call: removeUserFromNationCommand,
+    category: topic,
+    serverOnly: true,
+    permissions: none seq[PermissionFlags],
+    options: @[SlashOption(
+        kind: acotUser,
+        name: "user",
+        description: "Removes this member from your main nation.",
         required: some true
     )]
 )
@@ -183,21 +198,6 @@ add SlashCommand(
         kind: acotStr,
         name: "nation",
         description: "Declines invite to this nation.",
-        required: some true
-    )]
-)
-
-add SlashCommand(
-    name: "remove member",
-    desc: "Removes a member from your currently ruled nation.",
-    call: removeUserFromNationCommand,
-    category: topic,
-    serverOnly: true,
-    permissions: none seq[PermissionFlags],
-    options: @[SlashOption(
-        kind: acotUser,
-        name: "user",
-        description: "Removes this member from your main nation.",
         required: some true
     )]
 )
@@ -243,21 +243,6 @@ add SlashCommand(
 )
 
 add SlashCommand(
-    name: "set nation wiki",
-    desc: "Links an external wiki page to your nation.",
-    call: setNationWikiLinkCommand,
-    category: topic,
-    serverOnly: true,
-    permissions: none seq[PermissionFlags],
-    options: @[SlashOption(
-        kind: acotStr,
-        name: "link",
-        description: "Links your nation to a wiki page.",
-        required: some true
-    )]
-)
-
-add SlashCommand(
     name: "set nation flag",
     desc: "Sets your nations flag. (accepts urls to pictures)",
     call: setNationFlagLinkCommand,
@@ -287,4 +272,17 @@ add SlashCommand(
     )]
 )
 
-
+add SlashCommand(
+    name: "set nation wiki",
+    desc: "Links an external wiki page to your nation.",
+    call: setNationWikiLinkCommand,
+    category: topic,
+    serverOnly: true,
+    permissions: none seq[PermissionFlags],
+    options: @[SlashOption(
+        kind: acotStr,
+        name: "link",
+        description: "Links your nation to a wiki page.",
+        required: some true
+    )]
+)

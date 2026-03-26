@@ -22,7 +22,7 @@ proc onReady(s, r) {.event(discord).} =
     # Update status and send commands to discord:
     discard s.updateStatus(
         activities = @[ActivityStatus(
-            name: "testing, beep boop",
+            name: "LARPing",
             kind: atPlaying
         )],
         status = "online",

@@ -119,21 +119,6 @@ add SlashCommand(
 )
 
 add SlashCommand(
-    name: "leave nation",
-    desc: "Makes you leave a nation. (cannot be undone!)",
-    call: leaveNationCommand,
-    category: topic,
-    serverOnly: true,
-    permissions: none seq[PermissionFlags],
-    options: @[SlashOption(
-        kind: acotStr,
-        name: "nation",
-        description: "Leaves the specified nation.",
-        required: some true
-    )]
-)
-
-add SlashCommand(
     name: "invite member",
     desc: "Invites a member to your currently ruled nation.",
     call: sendInviteCommand,
@@ -159,6 +144,21 @@ add SlashCommand(
         kind: acotUser,
         name: "user",
         description: "Removes this member from your main nation.",
+        required: some true
+    )]
+)
+
+add SlashCommand(
+    name: "leave nation",
+    desc: "Makes you leave a nation. (cannot be undone!)",
+    call: leaveNationCommand,
+    category: topic,
+    serverOnly: true,
+    permissions: none seq[PermissionFlags],
+    options: @[SlashOption(
+        kind: acotStr,
+        name: "nation",
+        description: "Leaves the specified nation.",
         required: some true
     )]
 )

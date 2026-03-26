@@ -2,6 +2,8 @@
 
 This article covers your abilities while being a member of a nation.
 
+[Click here to see Nation Management](./creating_nation.md)
+
 ## 1. Invites and membership of a nation
 
 ### Accepting or Rejecting an invitation
